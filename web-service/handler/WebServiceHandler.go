@@ -6,8 +6,8 @@ import (
     "sybo/web-service/data"
 )
 
-type WebServiceHandler interface {
-    *gin.Router
+type WebServiceHandler struct {
+
 }
 
 func (handler WebServiceHandler) createUser(name string) data.User {
@@ -18,7 +18,7 @@ func (handler WebServiceHandler) saveState(uid string, state data.State) {
     
 }
 
-func (handler WebServiceHandler) loadState(uid string) state.State {
+func (handler WebServiceHandler) loadState(uid string) data.State {
     
 }
 
@@ -29,3 +29,9 @@ func (handler WebServiceHandler) updateFriends(uids []string) {
 func (handler WebServiceHandler) getFriends(uid string) []string {
     
 }
+
+func (handler WebServiceHandler) getAllUsers() []data.User {
+    
+}
+
+
