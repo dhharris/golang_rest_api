@@ -1,11 +1,11 @@
 package data
 
 type IStorageHandler interface {
-    insertUser()
-    getUser() User
-    getAllUsers() []User
-    getState() State
-    setState()
-    setFriends()
-    getFriends() []string
+    InsertUser(user User)
+    GetUser(uid string) User
+    GetAllUsers() []User
+    GetState(uid string) State
+    SetState(uid string, state State)
+    SetFriends(uid string, friendUids []string)
+    GetFriends(uid string) []string
 }

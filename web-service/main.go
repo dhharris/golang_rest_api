@@ -10,5 +10,5 @@ import (
 
 func main() {
     fmt.Println("Hello world!"); 
-    handler := WebServiceHandler{}
+    handler := new(handler.WebServiceHandler)
 }

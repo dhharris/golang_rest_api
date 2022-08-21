@@ -1,6 +1,6 @@
 package data
 
 type State struct {
-    gamesPlayed int
-    highScore int
+    GamesPlayed int `json:"gamesPlayed"`
+    Score int `json:"score"`
 }

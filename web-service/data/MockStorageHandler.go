@@ -8,31 +8,31 @@ type MockStorageHandler struct {
     friends map[string][]string
 }
 
-func (s MockStorageHandler) insertUser(user User) {
-    s.users[user.id] = user 
+func (s MockStorageHandler) InsertUser(user User) {
+    s.users[user.ID] = user 
 }
 
-func (s MockStorageHandler) getUser(id string) User {
+func (s MockStorageHandler) GetUser(id string) User {
     return s.users[id]
 }
 
-func (s MockStorageHandler) getAllUsers() []User {
+func (s MockStorageHandler) GetAllUsers() []User {
     return maps.Values(s.users)    
 }
 
-func (s MockStorageHandler) getState(id string) State {
+func (s MockStorageHandler) GetState(id string) State {
     return s.states[id]
 }
 
-func (s MockStorageHandler) setState(id string, state State) {
+func (s MockStorageHandler) SetState(id string, state State) {
     s.states[id] = state
 }
 
-func (s MockStorageHandler) setFriends(id string, friendIds []string) {
+func (s MockStorageHandler) SetFriends(id string, friendIds []string) {
     s.friends[id] = friendIds
 }
 
-func (s MockStorageHandler) getFriends(id string) []string {
+func (s MockStorageHandler) GetFriends(id string) []string {
     return s.friends[id]
 }
 
