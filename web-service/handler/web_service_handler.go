@@ -25,6 +25,7 @@ func (handler WebServiceHandler) CreateUser(req data.NewUserRequest) data.User {
 		Name: req.Name,
 		ID:   uuid.NewString(),
 	}
+
 	handler.storage.InsertUser(user)
 	return user
 }

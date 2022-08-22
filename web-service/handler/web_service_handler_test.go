@@ -2,9 +2,12 @@ package handler
 
 import (
 	"github.com/google/uuid"
+	"reflect"
 	"sybo/web-service/data"
 	"testing"
 )
+
+const kTestUID = "uid"
 
 func TestCreateUser(t *testing.T) {
 	storage := data.NewMockStorageHandler()
@@ -39,12 +42,12 @@ func TestCreateUser(t *testing.T) {
 
 func TestSaveState(t *testing.T) {
 	storage := data.NewMockStorageHandler()
-	storage.InsertUser(data.User{
-		Name: "test",
-		ID:   "uid",
-	})
 	handler := NewWebServiceHandler(Options{
 		Storage: storage,
+	})
+	storage.InsertUser(data.User{
+		Name: "test",
+		ID:   kTestUID,
 	})
 
 	want := data.State{
@@ -52,12 +55,12 @@ func TestSaveState(t *testing.T) {
 		GamesPlayed: 69,
 	}
 
-	handler.SaveState("uid", want)
+	handler.SaveState(kTestUID, want)
 
-	have := storage.GetState("uid")
+	have := storage.GetState(kTestUID)
 
 	if want != have {
-		t.Fatalf(`GetState(%q) = %v, want %v`, "uid", have, want)
+		t.Fatalf(`GetState(%q) = %v, want %v`, kTestUID, have, want)
 	}
 }
 
@@ -71,11 +74,76 @@ func TestLoadState(t *testing.T) {
 		Score:       420,
 		GamesPlayed: 69,
 	}
-	storage.SetState("uid", want)
+	storage.SetState(kTestUID, want)
 
-	have := handler.LoadState("uid")
+	have := handler.LoadState(kTestUID)
 
 	if want != have {
-		t.Fatalf(`LoadState(%q) = %v, want %v`, "uid", have, want)
+		t.Fatalf(`LoadState(%q) = %v, want %v`, kTestUID, have, want)
+	}
+}
+
+func TestUpdateFriends(t *testing.T) {
+	storage := data.NewMockStorageHandler()
+	handler := NewWebServiceHandler(Options{
+		Storage: storage,
+	})
+
+	want := []string{"uid1", "uid2"}
+
+	handler.UpdateFriends(kTestUID, want)
+
+	have := storage.GetFriends(kTestUID)
+
+	if !reflect.DeepEqual(want, have) {
+		t.Fatalf(`GetFriends(%q) = %v, want %v`, kTestUID, have, want)
+	}
+
+	// Make sure friends can be updated
+	want = append(have, "uid3")
+	handler.UpdateFriends(kTestUID, want)
+
+	have = storage.GetFriends(kTestUID)
+
+	if !reflect.DeepEqual(want, have) {
+		t.Fatalf(`GetFriends(%q) = %v, want %v`, kTestUID, have, want)
+	}
+}
+
+func TestGetFriends(t *testing.T) {
+	storage := data.NewMockStorageHandler()
+	handler := NewWebServiceHandler(Options{
+		Storage: storage,
+	})
+
+	want := []string{"uid1", "uid2"}
+
+	storage.SetFriends(kTestUID, want)
+
+	have := handler.GetFriends(kTestUID)
+
+	if !reflect.DeepEqual(want, have) {
+		t.Fatalf(`GetFriends(%q) = %v, want %v`, kTestUID, have, want)
+	}
+}
+
+func TestGetAllUsers(t *testing.T) {
+	storage := data.NewMockStorageHandler()
+	handler := NewWebServiceHandler(Options{
+		Storage: storage,
+	})
+
+	testUser := data.User{
+		Name: "test",
+		ID:   kTestUID,
+	}
+
+	storage.InsertUser(testUser)
+
+	want := storage.GetAllUsers()
+	have := handler.GetAllUsers()
+
+	if !reflect.DeepEqual(want, have) {
+		t.Fatalf(`GetAllUsers() = %v, want %v`, have, want)
 	}
 }
