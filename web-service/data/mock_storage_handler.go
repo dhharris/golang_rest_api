@@ -8,6 +8,14 @@ type MockStorageHandler struct {
     friends map[string][]string
 }
 
+func NewMockStorageHandler() MockStorageHandler {
+    return MockStorageHandler{
+        users: make(map[string]User),
+        states: make(map[string]State),
+        friends: make(map[string][]string),
+    }
+}
+
 func (s MockStorageHandler) InsertUser(user User) {
     s.users[user.ID] = user 
 }
