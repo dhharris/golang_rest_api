@@ -12,10 +12,20 @@ func main() {
 	// TODO: remove
 	fmt.Println("Hello world!")
 
-	options := handler.Options{
-		Storage: data.NewMockStorageHandler(),
+	mySqlOptions := data.MysqlOptions{
+		DbName:     "sybo",
+		DbUser:     "root",
+		DbPassword: "password",
 	}
-	handler := handler.NewWebServiceHandler(options)
+
+	storage := data.MysqlStorageHandler{
+		Driver: mySqlOptions.GetDriver(),
+	}
+
+	handler := handler.NewWebServiceHandler(
+		handler.Options{
+			Storage: storage,
+		})
 
 	router := gin.Default()
 
