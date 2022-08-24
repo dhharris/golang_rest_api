@@ -50,14 +50,41 @@ func TestSaveState(t *testing.T) {
 		ID:   kTestUID,
 	})
 
-	want := data.State{
+	state := data.State{
 		Score:       420,
 		GamesPlayed: 69,
 	}
 
-	handler.SaveState(kTestUID, want)
+	handler.SaveState(kTestUID, state)
 
 	have, _ := storage.GetState(kTestUID)
+	want := state
+
+	if want != have {
+		t.Fatalf(`GetState(%q) = %v, want %v`, kTestUID, have, want)
+	}
+
+	// Partial update
+	state.Score = 100
+	state.GamesPlayed = 70
+
+	handler.SaveState(kTestUID, state)
+
+	have, _ = storage.GetState(kTestUID)
+	// Score should not be updated since it is lower
+	want.GamesPlayed = 70
+
+	if want != have {
+		t.Fatalf(`GetState(%q) = %v, want %v`, kTestUID, have, want)
+	}
+
+	// Full update
+	state.Score = 500
+	state.GamesPlayed = 71
+
+	handler.SaveState(kTestUID, state)
+	have, _ = storage.GetState(kTestUID)
+	want = state
 
 	if want != have {
 		t.Fatalf(`GetState(%q) = %v, want %v`, kTestUID, have, want)
@@ -93,7 +120,7 @@ func TestUpdateFriends(t *testing.T) {
 
 	handler.UpdateFriends(kTestUID, want)
 
-	have := storage.GetFriends(kTestUID)
+	have, _ := storage.GetFriends(kTestUID)
 
 	if !reflect.DeepEqual(want, have) {
 		t.Fatalf(`GetFriends(%q) = %v, want %v`, kTestUID, have, want)
@@ -103,7 +130,7 @@ func TestUpdateFriends(t *testing.T) {
 	want = append(have, "uid3")
 	handler.UpdateFriends(kTestUID, want)
 
-	have = storage.GetFriends(kTestUID)
+	have, _ = storage.GetFriends(kTestUID)
 
 	if !reflect.DeepEqual(want, have) {
 		t.Fatalf(`GetFriends(%q) = %v, want %v`, kTestUID, have, want)
@@ -140,8 +167,8 @@ func TestGetAllUsers(t *testing.T) {
 
 	storage.InsertUser(testUser)
 
-	want, _ := storage.GetAllUsers()
-	have, _ := handler.GetAllUsers()
+	want := storage.GetAllUsers()
+	have := handler.GetAllUsers()
 
 	if !reflect.DeepEqual(want, have) {
 		t.Fatalf(`GetAllUsers() = %v, want %v`, have, want)

@@ -32,7 +32,7 @@ func (handler WebServiceHandler) CreateUser(req data.NewUserRequest) data.User {
 
 func (handler WebServiceHandler) SaveState(uid string, state data.State) {
 	oldState, err := handler.LoadState(uid)
-	if err != nil && oldState.Score > state.Score {
+	if err == nil && oldState.Score > state.Score {
 		// Keep old highscore if higher
 		state.Score = oldState.Score
 	}
