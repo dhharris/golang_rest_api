@@ -1,21 +1,22 @@
-CREATE DATABASE sybo;
+CREATE DATABASE IF NOT EXISTS sybo;
 
 USE sybo;
 
 CREATE TABLE users (
-    uuid VARCHAR(36),
-    name VARCHAR(64),
+    uuid VARCHAR(40) DEFAULT (uuid()),
+    name VARCHAR(64) NOT NULL,
     PRIMARY KEY (uuid)
 );
 
 CREATE TABLE state (
-    uuid VARCHAR(36),
-    games_played INT,
-    score INT,
+    uuid VARCHAR(40),
+    games_played INT NOT NULL DEFAULT (0),
+    score INT NOT NULL DEFAULT (0),
     PRIMARY KEY (uuid)
 );
 
 CREATE TABLE friends (
-    uuid VARCHAR(36),
-    friends JSON 
+    uuid VARCHAR(40),
+    friends JSON NOT NULL DEFAULT ('[]'),
+    PRIMARY KEY (uuid)
 );
