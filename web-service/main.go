@@ -43,6 +43,17 @@ func main() {
 		c.IndentedJSON(http.StatusOK, resp)
 	})
 
+	router.PUT("/user/:id/state", func(c *gin.Context) {
+		id := c.Param("id")
+		var state data.State
+		if err := c.BindJSON(&state); err != nil {
+			return
+		}
+
+		handler.SaveState(id, state)
+		c.IndentedJSON(http.StatusOK, "Game saved")
+	})
+
 	router.GET("/user/:id/state", func(c *gin.Context) {
 		id := c.Param("id")
 		state, err := handler.LoadState(id)

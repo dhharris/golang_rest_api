@@ -103,9 +103,26 @@ func (s MysqlStorageHandler) GetState(id string) (State, error) {
 
 	return state, err
 }
-
 func (s MysqlStorageHandler) SetState(id string, state State) {
 	// Check if null - depending on result, insert / update
+	var count int
+	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM state WHERE uuid = %q", id)
+	err := s.Driver.QueryRow(countQuery).Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var query string
+	if count == 0 {
+		query = fmt.Sprintf("INSERT INTO state (uuid, games_played, score) VALUES (%q, %d, %d)", id, state.GamesPlayed, state.Score)
+	} else {
+		query = fmt.Sprintf("UPDATE state SET games_played = %d, score = %d WHERE uuid = %q", state.GamesPlayed, state.Score, id)
+	}
+	_, err = s.Driver.Query(query)
+
+	if err != nil {
+		log.Fatalf("Error updating state for user %q: %v", id, err)
+	}
 }
 
 func (s MysqlStorageHandler) SetFriends(id string, friendIds []string) {
