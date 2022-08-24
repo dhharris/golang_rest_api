@@ -5,14 +5,14 @@ import "golang.org/x/exp/maps"
 type MockStorageHandler struct {
 	users   map[string]User
 	states  map[string]State
-	friends map[string][]string
+	friends map[string]Friends
 }
 
 func NewMockStorageHandler() MockStorageHandler {
 	return MockStorageHandler{
 		users:   make(map[string]User),
 		states:  make(map[string]State),
-		friends: make(map[string][]string),
+		friends: make(map[string]Friends),
 	}
 }
 
@@ -36,10 +36,10 @@ func (s MockStorageHandler) SetState(id string, state State) {
 	s.states[id] = state
 }
 
-func (s MockStorageHandler) SetFriends(id string, friendIds []string) {
-	s.friends[id] = friendIds
+func (s MockStorageHandler) SetFriends(id string, friends Friends) {
+	s.friends[id] = friends
 }
 
-func (s MockStorageHandler) GetFriends(id string) ([]string, error) {
+func (s MockStorageHandler) GetFriends(id string) (Friends, error) {
 	return s.friends[id], nil
 }

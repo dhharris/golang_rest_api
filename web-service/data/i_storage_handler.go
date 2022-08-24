@@ -6,6 +6,6 @@ type IStorageHandler interface {
 	GetAllUsers() []User
 	GetState(uid string) (State, error)
 	SetState(uid string, state State)
-	SetFriends(uid string, friendUids []string)
-	GetFriends(uid string) ([]string, error)
+	SetFriends(uid string, friends Friends)
+	GetFriends(uid string) (Friends, error)
 }

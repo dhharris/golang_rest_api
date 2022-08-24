@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	log "github.com/sirupsen/logrus"
@@ -110,14 +111,16 @@ func (s MysqlStorageHandler) SetState(id string, state State) {
 	}
 }
 
-func (s MysqlStorageHandler) SetFriends(id string, friendIds []string) {
+func (s MysqlStorageHandler) SetFriends(id string, friends Friends) {
 }
 
-func (s MysqlStorageHandler) GetFriends(id string) ([]string, error) {
-	var friends []string
+func (s MysqlStorageHandler) GetFriends(id string) (Friends, error) {
+	var buf []uint8
+	var friends Friends
 	query := "SELECT friends FROM friends WHERE uuid = ?"
 
-	err := s.Driver.QueryRow(query, id).Scan(&friends)
+	err := s.Driver.QueryRow(query, id).Scan(&buf)
+	json.Unmarshal(buf, &friends)
 
 	if err != nil {
 		log.Error(err)

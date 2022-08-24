@@ -44,11 +44,11 @@ func (handler WebServiceHandler) LoadState(uid string) (data.State, error) {
 	return handler.storage.GetState(uid)
 }
 
-func (handler WebServiceHandler) UpdateFriends(uid string, friendUids []string) {
-	handler.storage.SetFriends(uid, friendUids)
+func (handler WebServiceHandler) UpdateFriends(uid string, friends data.Friends) {
+	handler.storage.SetFriends(uid, friends)
 }
 
-func (handler WebServiceHandler) GetFriends(uid string) ([]string, error) {
+func (handler WebServiceHandler) GetFriends(uid string) (data.Friends, error) {
 	return handler.storage.GetFriends(uid)
 }
 

@@ -14,6 +14,6 @@ type State struct {
 	Score       int `json:"score"`
 }
 
-type FriendsResponse struct {
+type Friends struct {
 	Friends []string `json:"friends"`
 }

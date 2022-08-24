@@ -116,7 +116,9 @@ func TestUpdateFriends(t *testing.T) {
 		Storage: storage,
 	})
 
-	want := []string{"uid1", "uid2"}
+	want := data.Friends{
+		Friends: []string{"uid1", "uid2"},
+	}
 
 	handler.UpdateFriends(kTestUID, want)
 
@@ -127,7 +129,7 @@ func TestUpdateFriends(t *testing.T) {
 	}
 
 	// Make sure friends can be updated
-	want = append(have, "uid3")
+	want.Friends = append(want.Friends, "uid3")
 	handler.UpdateFriends(kTestUID, want)
 
 	have, _ = storage.GetFriends(kTestUID)
@@ -143,7 +145,9 @@ func TestGetFriends(t *testing.T) {
 		Storage: storage,
 	})
 
-	want := []string{"uid1", "uid2"}
+	want := data.Friends{
+		Friends: []string{"uid1", "uid2"},
+	}
 
 	storage.SetFriends(kTestUID, want)
 

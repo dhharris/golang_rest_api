@@ -70,9 +70,7 @@ func main() {
 		if err != nil {
 			c.IndentedJSON(http.StatusNotFound, err)
 		} else {
-			c.IndentedJSON(http.StatusOK, data.FriendsResponse{
-				Friends: friends,
-			})
+			c.IndentedJSON(http.StatusOK, friends)
 		}
 	})
 
