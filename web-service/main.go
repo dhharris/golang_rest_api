@@ -38,9 +38,19 @@ func main() {
 	})
 
 	router.GET("/user", func(c *gin.Context) {
-        resp := make(map[string][]data.User)
-        resp["users"] = handler.GetAllUsers()
+		resp := make(map[string][]data.User)
+		resp["users"] = handler.GetAllUsers()
 		c.IndentedJSON(http.StatusOK, resp)
+	})
+
+	router.GET("/user/:id/state", func(c *gin.Context) {
+		id := c.Param("id")
+		state, err := handler.LoadState(id)
+		if err != nil {
+			c.IndentedJSON(http.StatusNotFound, err)
+		} else {
+			c.IndentedJSON(http.StatusOK, state)
+		}
 	})
 
 	router.Run(":8080")

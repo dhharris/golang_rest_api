@@ -70,7 +70,6 @@ func (s MysqlStorageHandler) GetAllUsers() []User {
 	var users []User
 
 	res, err := s.Driver.Query("SELECT uuid, name FROM users")
-	defer res.Close()
 
 	if err != nil {
 		log.Error(err)
@@ -93,13 +92,20 @@ func (s MysqlStorageHandler) GetAllUsers() []User {
 }
 
 func (s MysqlStorageHandler) GetState(id string) (State, error) {
-	return State{
-		GamesPlayed: 42,
-		Score:       358,
-	}, nil
+	var state State
+	query := fmt.Sprintf("SELECT games_played, score FROM state WHERE uuid = %q", id)
+
+	err := s.Driver.QueryRow(query).Scan(&state.GamesPlayed, &state.Score)
+
+	if err != nil {
+		log.Error(err)
+	}
+
+	return state, err
 }
 
 func (s MysqlStorageHandler) SetState(id string, state State) {
+	// Check if null - depending on result, insert / update
 }
 
 func (s MysqlStorageHandler) SetFriends(id string, friendIds []string) {
