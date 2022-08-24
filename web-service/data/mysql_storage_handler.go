@@ -43,29 +43,23 @@ type MysqlStorageHandler struct {
 
 func (s MysqlStorageHandler) InsertUser(user User) {
 	query := "INSERT INTO users (uuid, name) VALUES (?, ?)"
-    // Safe from SQL injection attacks
+	// Safe from SQL injection attacks
 	_, err := s.Driver.Exec(query, user.ID, user.Name)
 
 	if err != nil {
 		// We never expect errors when creating new users
 		log.Fatalf("Error adding user %v to DB: %v", user, err)
 	}
-    
-    // TODO: Add rows to other tables
 }
 
 func (s MysqlStorageHandler) GetUser(id string) (User, error) {
-	var user User
-	query := "SELECT uuid, name FROM users WHERE uuid = ?"
-    // TODO: QueryRow
-	res, err := s.Driver.Query(query, id)
+	user := User{ID: id}
+	query := "SELECT name FROM users WHERE uuid = ?"
+	err := s.Driver.QueryRow(query, id).Scan(&user.Name)
 
 	if err != nil {
 		log.Error(err)
-		return user, err
 	}
-
-	err = res.Scan(&user.ID, &user.Name)
 
 	return user, err
 }
@@ -108,9 +102,8 @@ func (s MysqlStorageHandler) GetState(id string) (State, error) {
 	return state, err
 }
 func (s MysqlStorageHandler) SetState(id string, state State) {
-	// Check if null - depending on result, insert / update
-    query := "UPDATE state SET games_played = ?, score = ? WHERE uuid = ?"
-    _, err := s.Driver.Exec(query, state.GamesPlayed, state.Score, id)
+	query := "UPDATE state SET games_played = ?, score = ? WHERE uuid = ?"
+	_, err := s.Driver.Exec(query, state.GamesPlayed, state.Score, id)
 
 	if err != nil {
 		log.Fatalf("Error updating state for user %q: %v", id, err)

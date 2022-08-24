@@ -20,3 +20,14 @@ CREATE TABLE friends (
     friends JSON NOT NULL DEFAULT ('[]'),
     PRIMARY KEY (uuid)
 );
+
+DELIMITER $$
+CREATE TRIGGER after_new_user
+AFTER INSERT
+ON users FOR EACH ROW
+BEGIN
+    INSERT INTO state (uuid) VALUES (NEW.uuid);
+    INSERT INTO friends (uuid) VALUES (NEW.uuid);
+END$$
+
+DELIMITER ;
