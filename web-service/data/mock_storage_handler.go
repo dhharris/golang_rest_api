@@ -24,8 +24,8 @@ func (s MockStorageHandler) GetUser(id string) (User, error) {
 	return s.users[id], nil
 }
 
-func (s MockStorageHandler) GetAllUsers() ([]User, error) {
-	return maps.Values(s.users), nil
+func (s MockStorageHandler) GetAllUsers() []User {
+	return maps.Values(s.users)
 }
 
 func (s MockStorageHandler) GetState(id string) (State, error) {

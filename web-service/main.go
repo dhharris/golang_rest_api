@@ -37,5 +37,11 @@ func main() {
 		c.IndentedJSON(http.StatusOK, handler.CreateUser(request))
 	})
 
+	router.GET("/user", func(c *gin.Context) {
+        resp := make(map[string][]data.User)
+        resp["users"] = handler.GetAllUsers()
+		c.IndentedJSON(http.StatusOK, resp)
+	})
+
 	router.Run(":8080")
 }

@@ -52,6 +52,6 @@ func (handler WebServiceHandler) GetFriends(uid string) ([]string, error) {
 	return handler.storage.GetFriends(uid)
 }
 
-func (handler WebServiceHandler) GetAllUsers() ([]data.User, error) {
+func (handler WebServiceHandler) GetAllUsers() []data.User {
 	return handler.storage.GetAllUsers()
 }

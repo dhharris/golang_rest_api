@@ -66,7 +66,7 @@ func (s MysqlStorageHandler) GetUser(id string) (User, error) {
 	return user, err
 }
 
-func (s MysqlStorageHandler) GetAllUsers() ([]User, error) {
+func (s MysqlStorageHandler) GetAllUsers() []User {
 	var users []User
 
 	res, err := s.Driver.Query("SELECT uuid, name FROM users")
@@ -74,7 +74,7 @@ func (s MysqlStorageHandler) GetAllUsers() ([]User, error) {
 
 	if err != nil {
 		log.Error(err)
-		return users, err
+		return users
 	}
 
 	for res.Next() {
@@ -89,7 +89,7 @@ func (s MysqlStorageHandler) GetAllUsers() ([]User, error) {
 		users = append(users, user)
 	}
 
-	return users, nil
+	return users
 }
 
 func (s MysqlStorageHandler) GetState(id string) (State, error) {
