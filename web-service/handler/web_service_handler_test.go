@@ -33,7 +33,7 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	// Test data created
-	have := storage.GetUser(user.ID)
+	have, _ := storage.GetUser(user.ID)
 
 	if have != user {
 		t.Fatalf(`GetUser(%q) = %v, want %v`, user.ID, have, user)
@@ -57,7 +57,7 @@ func TestSaveState(t *testing.T) {
 
 	handler.SaveState(kTestUID, want)
 
-	have := storage.GetState(kTestUID)
+	have, _ := storage.GetState(kTestUID)
 
 	if want != have {
 		t.Fatalf(`GetState(%q) = %v, want %v`, kTestUID, have, want)
@@ -76,7 +76,7 @@ func TestLoadState(t *testing.T) {
 	}
 	storage.SetState(kTestUID, want)
 
-	have := handler.LoadState(kTestUID)
+	have, _ := handler.LoadState(kTestUID)
 
 	if want != have {
 		t.Fatalf(`LoadState(%q) = %v, want %v`, kTestUID, have, want)
@@ -120,7 +120,7 @@ func TestGetFriends(t *testing.T) {
 
 	storage.SetFriends(kTestUID, want)
 
-	have := handler.GetFriends(kTestUID)
+	have, _ := handler.GetFriends(kTestUID)
 
 	if !reflect.DeepEqual(want, have) {
 		t.Fatalf(`GetFriends(%q) = %v, want %v`, kTestUID, have, want)
@@ -140,8 +140,8 @@ func TestGetAllUsers(t *testing.T) {
 
 	storage.InsertUser(testUser)
 
-	want := storage.GetAllUsers()
-	have := handler.GetAllUsers()
+	want, _ := storage.GetAllUsers()
+	have, _ := handler.GetAllUsers()
 
 	if !reflect.DeepEqual(want, have) {
 		t.Fatalf(`GetAllUsers() = %v, want %v`, have, want)

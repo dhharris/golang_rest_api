@@ -31,8 +31,8 @@ func (handler WebServiceHandler) CreateUser(req data.NewUserRequest) data.User {
 }
 
 func (handler WebServiceHandler) SaveState(uid string, state data.State) {
-	oldState := handler.LoadState(uid)
-	if oldState.Score > state.Score {
+	oldState, err := handler.LoadState(uid)
+	if err != nil && oldState.Score > state.Score {
 		// Keep old highscore if higher
 		state.Score = oldState.Score
 	}
@@ -40,7 +40,7 @@ func (handler WebServiceHandler) SaveState(uid string, state data.State) {
 	handler.storage.SetState(uid, state)
 }
 
-func (handler WebServiceHandler) LoadState(uid string) data.State {
+func (handler WebServiceHandler) LoadState(uid string) (data.State, error) {
 	return handler.storage.GetState(uid)
 }
 
@@ -48,10 +48,10 @@ func (handler WebServiceHandler) UpdateFriends(uid string, friendUids []string) 
 	handler.storage.SetFriends(uid, friendUids)
 }
 
-func (handler WebServiceHandler) GetFriends(uid string) []string {
+func (handler WebServiceHandler) GetFriends(uid string) ([]string, error) {
 	return handler.storage.GetFriends(uid)
 }
 
-func (handler WebServiceHandler) GetAllUsers() []data.User {
+func (handler WebServiceHandler) GetAllUsers() ([]data.User, error) {
 	return handler.storage.GetAllUsers()
 }

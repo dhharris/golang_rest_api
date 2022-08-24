@@ -38,33 +38,43 @@ func (o MysqlOptions) GetDriver() *sql.DB {
 }
 
 type MysqlStorageHandler struct {
-    Driver *sql.DB 
+	Driver *sql.DB
 }
 
 func (s MysqlStorageHandler) InsertUser(user User) {
-    query := fmt.Sprintf("INSERT INTO users (uuid, name) VALUES (%q, %q)", user.ID, user.Name)
+	query := fmt.Sprintf("INSERT INTO users (uuid, name) VALUES (%q, %q)", user.ID, user.Name)
 	_, err := s.Driver.Query(query)
 
 	if err != nil {
-		log.Errorf("Error adding user %v to DB: %v", user, err)
+		// We never expect errors when creating new users
+		log.Fatalf("Error adding user %v to DB: %v", user, err)
 	}
 }
 
-func (s MysqlStorageHandler) GetUser(id string) User {
-	return User{
-		Name: "fake",
-		ID:   "id",
+func (s MysqlStorageHandler) GetUser(id string) (User, error) {
+	var user User
+	query := fmt.Sprintf("SELECT uuid, name FROM users WHERE uuid = %q", id)
+	res, err := s.Driver.Query(query)
+
+	if err != nil {
+		log.Error(err)
+		return user, err
 	}
+
+	err = res.Scan(&user.ID, &user.Name)
+
+	return user, err
 }
 
-func (s MysqlStorageHandler) GetAllUsers() []User {
-    var users []User	
+func (s MysqlStorageHandler) GetAllUsers() ([]User, error) {
+	var users []User
 
 	res, err := s.Driver.Query("SELECT uuid, name FROM users")
 	defer res.Close()
 
 	if err != nil {
 		log.Error(err)
+		return users, err
 	}
 
 	for res.Next() {
@@ -79,24 +89,22 @@ func (s MysqlStorageHandler) GetAllUsers() []User {
 		users = append(users, user)
 	}
 
-	return users
+	return users, nil
 }
 
-func (s MysqlStorageHandler) GetState(id string) State {
+func (s MysqlStorageHandler) GetState(id string) (State, error) {
 	return State{
 		GamesPlayed: 42,
 		Score:       358,
-	}
+	}, nil
 }
 
 func (s MysqlStorageHandler) SetState(id string, state State) {
-
 }
 
 func (s MysqlStorageHandler) SetFriends(id string, friendIds []string) {
-
 }
 
-func (s MysqlStorageHandler) GetFriends(id string) []string {
-	return make([]string, 0, 0)
+func (s MysqlStorageHandler) GetFriends(id string) ([]string, error) {
+	return make([]string, 0, 0), nil
 }

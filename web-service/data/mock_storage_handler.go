@@ -20,16 +20,16 @@ func (s MockStorageHandler) InsertUser(user User) {
 	s.users[user.ID] = user
 }
 
-func (s MockStorageHandler) GetUser(id string) User {
-	return s.users[id]
+func (s MockStorageHandler) GetUser(id string) (User, error) {
+	return s.users[id], nil
 }
 
-func (s MockStorageHandler) GetAllUsers() []User {
-	return maps.Values(s.users)
+func (s MockStorageHandler) GetAllUsers() ([]User, error) {
+	return maps.Values(s.users), nil
 }
 
-func (s MockStorageHandler) GetState(id string) State {
-	return s.states[id]
+func (s MockStorageHandler) GetState(id string) (State, error) {
+	return s.states[id], nil
 }
 
 func (s MockStorageHandler) SetState(id string, state State) {
@@ -40,6 +40,6 @@ func (s MockStorageHandler) SetFriends(id string, friendIds []string) {
 	s.friends[id] = friendIds
 }
 
-func (s MockStorageHandler) GetFriends(id string) []string {
-	return s.friends[id]
+func (s MockStorageHandler) GetFriends(id string) ([]string, error) {
+	return s.friends[id], nil
 }
