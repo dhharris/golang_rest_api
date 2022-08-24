@@ -42,19 +42,23 @@ type MysqlStorageHandler struct {
 }
 
 func (s MysqlStorageHandler) InsertUser(user User) {
-	query := fmt.Sprintf("INSERT INTO users (uuid, name) VALUES (%q, %q)", user.ID, user.Name)
-	_, err := s.Driver.Query(query)
+	query := "INSERT INTO users (uuid, name) VALUES (?, ?)"
+    // Safe from SQL injection attacks
+	_, err := s.Driver.Exec(query, user.ID, user.Name)
 
 	if err != nil {
 		// We never expect errors when creating new users
 		log.Fatalf("Error adding user %v to DB: %v", user, err)
 	}
+    
+    // TODO: Add rows to other tables
 }
 
 func (s MysqlStorageHandler) GetUser(id string) (User, error) {
 	var user User
-	query := fmt.Sprintf("SELECT uuid, name FROM users WHERE uuid = %q", id)
-	res, err := s.Driver.Query(query)
+	query := "SELECT uuid, name FROM users WHERE uuid = ?"
+    // TODO: QueryRow
+	res, err := s.Driver.Query(query, id)
 
 	if err != nil {
 		log.Error(err)
@@ -93,9 +97,9 @@ func (s MysqlStorageHandler) GetAllUsers() []User {
 
 func (s MysqlStorageHandler) GetState(id string) (State, error) {
 	var state State
-	query := fmt.Sprintf("SELECT games_played, score FROM state WHERE uuid = %q", id)
+	query := "SELECT games_played, score FROM state WHERE uuid = ?"
 
-	err := s.Driver.QueryRow(query).Scan(&state.GamesPlayed, &state.Score)
+	err := s.Driver.QueryRow(query, id).Scan(&state.GamesPlayed, &state.Score)
 
 	if err != nil {
 		log.Error(err)
@@ -105,20 +109,8 @@ func (s MysqlStorageHandler) GetState(id string) (State, error) {
 }
 func (s MysqlStorageHandler) SetState(id string, state State) {
 	// Check if null - depending on result, insert / update
-	var count int
-	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM state WHERE uuid = %q", id)
-	err := s.Driver.QueryRow(countQuery).Scan(&count)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var query string
-	if count == 0 {
-		query = fmt.Sprintf("INSERT INTO state (uuid, games_played, score) VALUES (%q, %d, %d)", id, state.GamesPlayed, state.Score)
-	} else {
-		query = fmt.Sprintf("UPDATE state SET games_played = %d, score = %d WHERE uuid = %q", state.GamesPlayed, state.Score, id)
-	}
-	_, err = s.Driver.Query(query)
+    query := "UPDATE state SET games_played = ?, score = ? WHERE uuid = ?"
+    _, err := s.Driver.Exec(query, state.GamesPlayed, state.Score, id)
 
 	if err != nil {
 		log.Fatalf("Error updating state for user %q: %v", id, err)
@@ -130,9 +122,9 @@ func (s MysqlStorageHandler) SetFriends(id string, friendIds []string) {
 
 func (s MysqlStorageHandler) GetFriends(id string) ([]string, error) {
 	var friends []string
-	query := fmt.Sprintf("SELECT friends FROM friends WHERE uuid = %q", id)
+	query := "SELECT friends FROM friends WHERE uuid = ?"
 
-	err := s.Driver.QueryRow(query).Scan(&friends)
+	err := s.Driver.QueryRow(query, id).Scan(&friends)
 
 	if err != nil {
 		log.Error(err)
