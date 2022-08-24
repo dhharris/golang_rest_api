@@ -64,5 +64,17 @@ func main() {
 		}
 	})
 
+	router.GET("/user/:id/friends", func(c *gin.Context) {
+		id := c.Param("id")
+		friends, err := handler.GetFriends(id)
+		if err != nil {
+			c.IndentedJSON(http.StatusNotFound, err)
+		} else {
+			c.IndentedJSON(http.StatusOK, data.FriendsResponse{
+				Friends: friends,
+			})
+		}
+	})
+
 	router.Run(":8080")
 }

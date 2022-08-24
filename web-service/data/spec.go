@@ -13,3 +13,7 @@ type State struct {
 	GamesPlayed int `json:"gamesPlayed"`
 	Score       int `json:"score"`
 }
+
+type FriendsResponse struct {
+	Friends []string `json:"friends"`
+}

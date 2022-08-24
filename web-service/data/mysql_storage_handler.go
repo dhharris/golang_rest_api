@@ -129,5 +129,14 @@ func (s MysqlStorageHandler) SetFriends(id string, friendIds []string) {
 }
 
 func (s MysqlStorageHandler) GetFriends(id string) ([]string, error) {
-	return make([]string, 0, 0), nil
+	var friends []string
+	query := fmt.Sprintf("SELECT friends FROM friends WHERE uuid = %q", id)
+
+	err := s.Driver.QueryRow(query).Scan(&friends)
+
+	if err != nil {
+		log.Error(err)
+	}
+
+	return friends, err
 }
