@@ -89,6 +89,15 @@ func (s MysqlStorageHandler) GetAllUsers() []User {
 	return users
 }
 
+func (s MysqlStorageHandler) SetState(id string, state State) {
+	query := "UPDATE state SET games_played = ?, score = ? WHERE uuid = ?"
+	_, err := s.Driver.Exec(query, state.GamesPlayed, state.Score, id)
+
+	if err != nil {
+		log.Fatalf("Error updating state for user %q: %v", id, err)
+	}
+}
+
 func (s MysqlStorageHandler) GetState(id string) (State, error) {
 	var state State
 	query := "SELECT games_played, score FROM state WHERE uuid = ?"
@@ -100,14 +109,6 @@ func (s MysqlStorageHandler) GetState(id string) (State, error) {
 	}
 
 	return state, err
-}
-func (s MysqlStorageHandler) SetState(id string, state State) {
-	query := "UPDATE state SET games_played = ?, score = ? WHERE uuid = ?"
-	_, err := s.Driver.Exec(query, state.GamesPlayed, state.Score, id)
-
-	if err != nil {
-		log.Fatalf("Error updating state for user %q: %v", id, err)
-	}
 }
 
 func (s MysqlStorageHandler) SetFriends(id string, friends Friends) {
