@@ -17,7 +17,7 @@ CREATE TABLE state (
 
 CREATE TABLE friends (
     uuid VARCHAR(40),
-    friends JSON NOT NULL DEFAULT ('[]'),
+    friends JSON NOT NULL DEFAULT ('{"friends": []}'),
     PRIMARY KEY (uuid)
 );
 
