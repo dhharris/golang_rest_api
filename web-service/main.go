@@ -64,6 +64,17 @@ func main() {
 		}
 	})
 
+	router.PUT("/user/:id/friends", func(c *gin.Context) {
+		id := c.Param("id")
+		var friends data.Friends
+		if err := c.BindJSON(&friends); err != nil {
+			return
+		}
+
+		handler.UpdateFriends(id, friends)
+		c.IndentedJSON(http.StatusOK, "Friends updated")
+	})
+
 	router.GET("/user/:id/friends", func(c *gin.Context) {
 		id := c.Param("id")
 		friends, err := handler.GetFriends(id)

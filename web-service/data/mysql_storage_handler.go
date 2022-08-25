@@ -30,7 +30,7 @@ func (o MysqlOptions) GetDriver() *sql.DB {
 		log.Fatal(err)
 	}
 
-	// Probably should be shorter timeout
+	// Probably should be a shorter timeout
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
@@ -48,7 +48,6 @@ func (s MysqlStorageHandler) InsertUser(user User) {
 	_, err := s.Driver.Exec(query, user.ID, user.Name)
 
 	if err != nil {
-		// We never expect errors when creating new users
 		log.Fatalf("Error adding user %v to DB: %v", user, err)
 	}
 }
@@ -112,6 +111,17 @@ func (s MysqlStorageHandler) SetState(id string, state State) {
 }
 
 func (s MysqlStorageHandler) SetFriends(id string, friends Friends) {
+	query := "UPDATE friends SET friends = ? WHERE uuid = ?"
+	encoded, err := json.Marshal(friends)
+
+	if err != nil {
+		log.Fatalf("Error encoding friends struct %v: %v", friends, err)
+	}
+
+	_, err = s.Driver.Exec(query, encoded, id)
+	if err != nil {
+		log.Fatalf("Error updating friends for user %q: %v", id, err)
+	}
 }
 
 func (s MysqlStorageHandler) GetFriends(id string) (Friends, error) {
